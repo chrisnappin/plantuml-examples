@@ -1,0 +1,25 @@
+@startuml basic-example
+!include <awslib/AWSCommon>
+
+!include <awslib/General/Users>
+!include <awslib/Mobile/APIGateway>
+!include <awslib/SecurityIdentityAndCompliance/Cognito>
+!include <awslib/Compute/Lambda>
+!include <awslib/Database/DynamoDB>
+
+left to right direction
+
+Users(sources, "Events", "millions of users")
+APIGateway(votingAPI, "Voting API", "user votes")
+Cognito(userAuth, "User Authentication", "JWT to submit votes")
+Lambda(generateToken, "User Credentials", "return JWT")
+Lambda(recordVote, "Record Vote", "enter or update vote per user")
+DynamoDB(voteDb, "Vote Database", "one entry per user")
+
+sources --> userAuth
+sources --> votingAPI
+userAuth <--> generateToken
+votingAPI --> recordVote
+recordVote --> voteDb
+
+@enduml

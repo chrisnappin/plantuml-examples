@@ -1,0 +1,20 @@
+@startuml dynamic
+!include <C4/C4_Dynamic>
+
+Container(spa, "Single-Page Application", "JavaScript and Angular", "Provides all of the internet banking functionality to customers via their web browser.")
+
+Container_Boundary(api, "API Application") {
+  Component(signIn, "Sign in Controller", "Spring MVC Rest Controller", "Allows users to sign in to the internet banking system.")
+  Component(securityComponent, "Security Component", "Spring Bean", "Provides functionality related to signing in, changing passwords, etc.")
+}
+
+ContainerDb(db, "Database", "Oracle Database Schema", "Stores user registration information, hashed authentication details, access logs etc.")
+
+' get auto numbered in this order...
+Rel_R(spa, signIn, "Submits credentials to", "JSON/HTTPS")
+Rel(signIn, securityComponent, "Calls isAuthenticated() on")
+Rel_L(securityComponent, db, "select * from users where username = ?", "JDBC")
+
+caption Dynamic Diagram for API Application
+
+@enduml

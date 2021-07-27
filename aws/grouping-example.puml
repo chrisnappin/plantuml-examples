@@ -1,0 +1,40 @@
+@startuml grouping-example
+!include <awslib/AWSCommon>
+
+!include <awslib/General/Users>
+!include <awslib/Mobile/APIGateway>
+!include <awslib/SecurityIdentityAndCompliance/Cognito>
+!include <awslib/Compute/Lambda>
+!include <awslib/Database/DynamoDB>
+
+left to right direction
+
+skinparam rectangle<<external>> {
+    backgroundColor lightgrey
+    borderStyle dashed
+    roundCorner 20
+}
+hide <<external>> stereotype
+
+Users(sources, "Events", "millions of users")
+
+rectangle "App" {
+    rectangle "External Subnet" as r <<external>> {
+        APIGateway(votingAPI, "Voting API", "user votes")
+        Lambda(recordVote, "Record Vote", "enter or update vote per user")
+    }
+    DynamoDB(voteDb, "Vote Database", "one entry per user")
+}
+
+package "Security" {
+    Cognito(userAuth, "User Authentication", "JWT to submit votes")
+    Lambda(generateToken, "User Credentials", "return JWT")
+}
+
+sources --> userAuth
+sources --> votingAPI
+userAuth <--> generateToken
+votingAPI --> recordVote
+recordVote --> voteDb
+
+@enduml

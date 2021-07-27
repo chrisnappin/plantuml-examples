@@ -1,0 +1,31 @@
+@startuml basic-example-simplified
+!include <azure/AzureCommon>
+!include <azure/AzureSimplified>
+
+' no azure icon for users...
+!include <awslib/AWSCommon>
+!include <awslib/AWSSimplified>
+!include <awslib/General/Users>
+
+!include <azure/Web/AzureAPIManagement>
+!include <azure/Identity/AzureActiveDirectory>
+!include <azure/Compute/AzureFunction>
+!include <azure/Databases/AzureCosmosDb>
+
+left to right direction
+
+AWSEntity(sources, "Events", "millions of users", AZURE_SYMBOL_COLOR, Users, Users)
+
+AzureAPIManagement(votingAPI, "Voting API", "user votes")
+AzureActiveDirectory(userAuth, "User Authentication", "JWT to submit votes")
+AzureFunction(generateToken, "User Credentials", "return JWT")
+AzureFunction(recordVote, "Record Vote", "enter or update vote per user")
+AzureCosmosDb(voteDb, "Vote Database", "one entry per user")
+
+sources --> userAuth
+sources --> votingAPI
+userAuth <--> generateToken
+votingAPI --> recordVote
+recordVote --> voteDb
+
+@enduml

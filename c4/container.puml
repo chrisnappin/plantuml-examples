@@ -1,0 +1,30 @@
+@startuml container
+!include <C4/C4_Container>
+
+Person(customer, "Personal Banking Customer", "A customer of the bank, with personal bank account.")
+
+System_Boundary(ent, "Internet Banking System") {
+  Container(webApp, "Web Application", "Java and Spring MVC", "Delivers the static content and the internet banking single page application.")
+  Container(spa, "Single-Page Application", "JavaScript and Angular", "Provides all of the internet banking functionality to customers via their web browser.")
+  Container(mobileApp, "Mobile App", "Xamarin", "Provides a limited subset of the internet banking functionality to customers via their mobile device.")
+  Container(api, "API Application", "Java and Spring MVC", "Provides internet banking functionality via a JSON/HTTPS API.")
+  ContainerDb(db, "Database", "Oracle Database Schema", "Stores user registration information, hashed authentication details, access logs etc.")
+}
+
+System_Ext(mainframe, "Mainframe Banking System", "Stores all of the core banking information about customers, accounts, transactions, etc.")
+System_Ext(email, "E-mail System", "The internal Microsoft Exchange e-mail system.")
+
+Rel_D(customer, webApp, "Visits bigbank.com/ib using", "HTTPS")
+Rel(customer, spa, "Views account balances, and makes payments using")
+Rel(customer, mobileApp, "Views account balances, and makes payments using")
+Rel_R(webApp, spa, "Delivers to the customer's web browser")
+Rel(spa, api, "Makes API calls to", "JSON/HTTPS")
+Rel(mobileApp, api, "Makes API calls to", "JSON/HTTPS")
+Rel_D(api, mainframe, "Makes API calls to", "XML/HTTPS")
+Rel_R(api, email, "Sends e-mail using", "SMTP")
+Rel_L(api, db, "Reads from and writes to", "JDBC")
+Rel_U(email, customer, "Sends e-mail to")
+
+caption Container Diagram for Internet Banking System
+
+@enduml

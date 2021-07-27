@@ -1,0 +1,45 @@
+@startuml component
+!include <C4/C4_Component>
+
+skinparam nodesep 20
+skinparam ranksep 100
+
+together {
+  Container(spa, "Single-Page Application", "JavaScript and Angular", "Provides all of the internet banking functionality to customers via their web browser.")
+  Container(mobileApp, "Mobile App", "Xamarin", "Provides a limited subset of the internet banking functionality to customers via their mobile device.")
+}
+
+Container_Boundary(api, "API Application") {
+  Component(signIn, "Sign in Controller", "Spring MVC Rest Controller", "Allows users to sign in to the internet banking system.")
+  Component(resetPwd, "Reset Password Controller", "Spring MVC Rest Controller", "Allows users to reset their passwords with a single use URL.")
+  Component(account, "Accounts Summary Controller", "Spring MVC Rest Controller", "Provides customers with a summary of their bank accounts.")
+  Component(securityComponent, "Security Component", "Spring Bean", "Provides functionality related to signing in, changing passwords, etc.")
+  Component(emailComponent, "E-mail Component", "Spring Bean", "Sends e-mails to users.")
+  Component(facade, "Mainframs Banking System Facade", "Spring Bean", "A facade into the mainframe banking system.")
+}
+
+ContainerDb(db, "Database", "Oracle Database Schema", "Stores user registration information, hashed authentication details, access logs etc.")
+
+System_Ext(mainframe, "Mainframe Banking System", "Stores all of the core banking information about customers, accounts, transactions, etc.")
+System_Ext(email, "E-mail System", "The internal Microsoft Exchange e-mail system.")
+
+Rel(spa, signIn, "Makes API calls to", "JSON/HTTPS")
+Rel(spa, resetPwd, "Makes API calls to", "JSON/HTTPS")
+Rel(spa, account, "Makes API calls to", "JSON/HTTPS")
+
+Rel(mobileApp, signIn, "Makes API calls to", "JSON/HTTPS")
+Rel(mobileApp, resetPwd, "Makes API calls to", "JSON/HTTPS")
+Rel(mobileApp, account, "Makes API calls to", "JSON/HTTPS")
+
+Rel(signIn, securityComponent, "Uses")
+Rel(resetPwd, securityComponent, "Uses")
+Rel(resetPwd, emailComponent, "Uses")
+Rel(account, facade, "Uses")
+
+Rel(securityComponent, db, "Reads from and writes to", "JDBC")
+Rel(emailComponent, email, "Sends e-mail using", "SMTP")
+Rel(facade, mainframe, "Makes API calls to", "XML/HTTPS")
+
+caption Component Diagram for API Application
+
+@enduml

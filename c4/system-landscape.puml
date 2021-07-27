@@ -1,0 +1,29 @@
+@startuml system-landscape
+!include <C4/C4_Context>
+
+skinparam linetype polyline
+
+Person(customer, "Personal Banking Customer", "A customer of the bank, with personal bank account.")
+
+Enterprise_Boundary(ent, "Big Bank Plc") {
+  Person_Ext(custService, "Customer Service Staff", "Customer service staff within the bank.")
+  Person_Ext(backOffice, "Back Office Staff", "Administration and support staff within the bank.")
+  System(intBankSys, "Internet Banking System", "Allows customers to view information about their bank accounts and make payments.")
+  System_Ext(atm, "ATM", "Allows customers to withdraw cash.")
+  System_Ext(mainframe, "Mainframe Banking System", "Stores all of the core banking information about customers, accounts, transactions, etc.")
+  System_Ext(email, "E-mail System", "The internal Microsoft Exchange e-mail system.")
+}
+
+Rel(customer, intBankSys, "Views account balances, and makes payments using")
+Rel(intBankSys, mainframe, "Gets account information from, and makes payments using")
+Rel(intBankSys, email, "Sends e-mail using")
+Rel(email, customer, "Sends e-mail to")
+Rel(customer, atm, "Withdraws cash using")
+Rel(customer, custService, "Asks questions to", "Telephone")
+Rel(atm, mainframe, "Uses")
+Rel(custService, mainframe, "Uses")
+Rel(backOffice, mainframe, "Uses")
+
+caption "System Landscape Diagram for Big Bank Plc"
+
+@enduml
